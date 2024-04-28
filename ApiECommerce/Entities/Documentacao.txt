@@ -1,0 +1,131 @@
+﻿    Modelo de entidades usado:
+
+    Usuario: Representa os usuários da aplicação, que podem ser clientes que fazem pedidos.
+    Armazena informações como nome, email, telefone e senha. Cada usuário pode ter uma ou 
+    mais pedidos associados.
+
+    Pedido: Representa uma ordem de compra feita por um usuário. Contém informações como 
+    endereço de entrega, valor total e data do pedido. Possui uma coleção de detalhes do pedido, 
+    que incluem informações sobre os produtos pedidos e as quantidades.
+
+
+    DetalhePedido: Representa os detalhes de um produto dentro de um pedido específico.
+    Armazena informações como preço, quantidade e valor total do produto em um determinado pedido.
+
+    Produto: Representa os produtos disponíveis para venda. Cada produto pertence a uma 
+    categoria específica. Possui detalhes como nome, descrição, preço, etc. Pode estar associado 
+    a pedidos e itens do carrinho de compras.
+
+
+    Categoria: Representa as categorias às quais os produtos pertencem. Cada categoria pode conter
+    vários produtos. Possui uma coleção de produtos relacionados.
+
+    ItemCarrinhoCompras: Representa um item dentro do carrinho de compras de um cliente. Contém 
+    informações como preço, quantidade e valor total do item no carrinho. É associado a um 
+    produto específico e a um cliente.
+
+----------------------------------------------------------------------------
+
+Os relacionamentos entre as entidades são definidos da seguinte forma:
+
+    Categoria e Produto:
+        Relacionamento de um para muitos (OneToMany): 
+        Uma categoria pode ter vários produtos, enquanto um produto pertence 
+        a uma única categoria. Esse relacionamento é estabelecido pela 
+        propriedade ICollection<Produto> Produtos na classe Categoria e pela 
+        propriedade int CategoriaId na classe Produto.
+
+    Produto e DetalhePedido:
+        Relacionamento de um para muitos (OneToMany): 
+        Um produto pode estar presente em vários detalhes de pedidos, enquanto 
+        um detalhe de pedido pertence a um único produto. Esse relacionamento 
+        é estabelecido pela propriedade ICollection<DetalhePedido> DetalhesPedido 
+        na classe Produto e pela propriedade int ProdutoId na classe DetalhePedido.
+
+    Pedido e DetalhePedido:
+        Relacionamento de um para muitos (OneToMany): 
+        Um pedido pode conter vários detalhes de pedidos, enquanto um detalhe 
+        de pedido pertence a um único pedido. Esse relacionamento é estabelecido 
+        pela propriedade ICollection<DetalhePedido> DetalhesPedido na classe 
+        Pedido e pela propriedade int PedidoId na classe DetalhePedido.
+
+    Produto e ItemCarrinhoCompras:
+        Relacionamento de um para muitos (OneToMany): 
+        Um produto pode estar presente em vários itens do carrinho de compras, 
+        enquanto um item do carrinho de compras pertence a um único produto. 
+        Esse relacionamento é estabelecido pela propriedade 
+        ICollection<ItemCarrinhoCompras> ItensCarrinhoCompras na classe Produto e 
+        pela propriedade int ProdutoId na classe ItemCarrinhoCompras.
+
+    Usuario e Pedido:
+        Relacionamento de um para muitos (OneToMany): 
+        Um usuário pode fazer vários pedidos, enquanto um pedido pertence a um 
+        único usuário. Esse relacionamento é estabelecido pela propriedade 
+        ICollection<Pedido> Pedidos na classe Usuario e pela propriedade 
+        int UsuarioId na classe Pedido.
+
+Esses relacionamentos modelam as associações entre as diferentes entidades 
+no contexto de uma aplicação de e-commerce, permitindo que você acesse e 
+manipule os dados de maneira eficaz por meio de consultas e operações de 
+CRUD (Create, Read, Update, Delete).
+----------------------------------------------------------------------------------------
+Data Annotations
+
+Usamos o Data Annotation StringLenght para restringir o tamanho da coluna no banco de dados. 
+
+O Data Annotation MaxLength também pode ser usasda para esta finalidade e pode ser usada em 
+qualquer tipo de propriedade que represente uma string, seja na modelagem de banco de dados 
+ou não. Ele define o número máximo de caracteres permitidos na coluna do banco de dados.
+
+Para realizar validações do modelo podemos usar StringLength, por outro lado, é uma 
+anotação do namespace System.ComponentModel.DataAnnotations e é mais genérica, sendo usada 
+principalmente em validações de modelo. Embora possa ser usada para restringir o tamanho da
+coluna do banco de dados, ela também é usada para definir o número máximo de caracteres 
+permitidos para validações de modelo durante a entrada de dados. Portanto,
+StringLength oferece um pouco mais de flexibilidade nesse sentido.
+-------------------------------------------------------------------------------------------------
+Para tratar com preço e valores monetários em uma aplicação ASP.NET Core usando o SQL Server como 
+banco de dados, usamos o tipo decimal. Aqui estão algumas razões para isso:
+
+Precisão exata: O tipo decimal é uma representação decimal de precisão fixa, o que significa que ele
+pode representar números decimais com precisão exata. Por outro lado, o tipo double é uma representação
+de ponto flutuante binária, o que pode resultar em imprecisões ao lidar com valores monetários, devido
+à forma como os números de ponto flutuante são armazenados e manipulados.
+
+Evita erros de arredondamento: Valores monetários frequentemente requerem cálculos precisos, e o uso de 
+decimal ajuda a evitar problemas de arredondamento que podem ocorrer com o tipo double.
+
+Compatibilidade com o SQL Server: O tipo decimal no C# é mapeado diretamente para o tipo decimal ou numeric
+no SQL Server, garantindo que não haja perda de precisão ao persistir dados no banco de dados.
+
+Portanto, para preços e valores totais em uma aplicação ASP.NET Core que utiliza o SQL Server como banco de dados,
+é recomendado usar o tipo decimal para garantir precisão e consistência nos cálculos monetários.
+-----------------------------------------------------------------------------------------------------------------
+[NotMapped] :
+
+O atributo [NotMapped] é usado para sinalizar ao Entity Framework Core que uma propriedade específica 
+em uma classe não deve ser mapeada para uma coluna no banco de dados. Isso é útil quando você tem 
+propriedades em suas classes que são apenas para uso interno na aplicação ou não precisam ser persistidas no banco de dados.
+
+No nosso modelo, a propriedade Imagem da classe Usuario tem o atributo [NotMapped]. Isso significa que a 
+propriedade Imagem não será persistida no banco de dados, mesmo que a classe Usuario seja mapeada como uma 
+tabela no banco de dados. Isso é útil quando você precisa receber uma imagem do usuário por meio de uma 
+solicitação HTTP, mas não deseja armazená-la diretamente no banco de dados.
+
+[JsonIgnore]:
+
+O atributo [JsonIgnore] é usado para sinalizar a serialização de uma propriedade em JSON durante a 
+comunicação com o cliente. Quando uma classe é serializada em JSON (por exemplo, ao retornar um 
+objeto como resposta de uma API), propriedades marcadas com [JsonIgnore] não serão incluídas no JSON resultante.
+
+No nosso modelo, várias propriedades têm o atributo [JsonIgnore], como Produtos na classe Categoria, 
+DetalhesPedido nas classes Pedido e Produto, e ItensCarrinhoCompras na classe Produto. Isso significa que essas 
+propriedades não serão incluídas quando as instâncias das classes forem serializadas em JSON, evitando assim 
+referências circulares e problemas de serialização infinita em casos de relacionamentos complexos entre as entidades.
+
+As consequências disso são que as propriedades marcadas com [JsonIgnore] não serão enviadas para o cliente
+em respostas JSON. Isso pode ser desejável em cenários onde você deseja controlar explicitamente quais 
+informações são enviadas ao cliente ou evitar problemas de desempenho devido a objetos complexos sendo 
+serializados recursivamente. No entanto, você deve ter cuidado ao usá-lo para garantir que informações 
+importantes não sejam inadvertidamente omitidas.
+
